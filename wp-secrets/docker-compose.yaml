@@ -6,13 +6,15 @@ services:
     volumes:
       - mysqlData:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password 
-      - MYSQL_DATABASE: wordpress
-      - MYSQL_USER: gbs
-      - MYSQL_PASSWORD_FILE: /run/secrets/db_password
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_password 
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=gbs
+      - MYSQL_PASSWORD_FILE=/run/secrets/db_password
     secrets:
       - db_password
       - db_root_password
+    networks:
+      - wordpressnet
   
   wp:
     image: wordpress
@@ -23,13 +25,16 @@ services:
       - 8080:80
     volumes:
       - wpData:/var/www/html
+    secrets:
+      - db_password
     environment:
       - WORDPRESS_DB_HOST=mysql
       - WORDPRESS_DB_USER=gbs
-      - WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_password
+      - WORDPRESS_DB_PASSWORD_FILE=/run/secrets/db_password
       - WORDPRESS_DB_NAME=wordpress
-    secrets:
-      - db_password
+    networks:
+      - wordpressnet
+
 
 volumes:
   mysqlData:
@@ -39,3 +44,11 @@ secrets:
     file: db_password.txt
   db_root_password:
     file: db_root_password.txt
+
+networks:
+  wordpressnet:
+    ipam:
+      config:
+        - subnet: 192.169.0.0/16
+
+  
