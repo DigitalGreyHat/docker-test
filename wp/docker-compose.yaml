@@ -6,13 +6,10 @@ services:
     volumes:
       - mysqlData:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password 
-      - MYSQL_DATABASE: wordpress
-      - MYSQL_USER: gbs
-      - MYSQL_PASSWORD_FILE: /run/secrets/db_password
-    secrets:
-      - db_password
-      - db_root_password
+      - MYSQL_ROOT_PASSWORD=somewordpress
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=gbs
+      - MYSQL_PASSWORD=-gbs-
   
   wp:
     image: wordpress
@@ -26,16 +23,9 @@ services:
     environment:
       - WORDPRESS_DB_HOST=mysql
       - WORDPRESS_DB_USER=gbs
-      - WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_password
+      - WORDPRESS_DB_PASSWORD=-gbs-
       - WORDPRESS_DB_NAME=wordpress
-    secrets:
-      - db_password
 
 volumes:
   mysqlData:
   wpData:
-secrets:
-  db_password:
-    file: db_password.txt
-  db_root_password:
-    file: db_root_password.txt
